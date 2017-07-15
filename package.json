@@ -1,0 +1,100 @@
+{
+  "name": "qub-xml-vscode",
+  "displayName": "XML Tools",
+  "description": "XML language support for VS Code",
+  "version": "1.2.2",
+  "publisher": "qub",
+  "categories": [
+    "Languages",
+    "Linters",
+    "Other"
+  ],
+  "icon": "images/QubXMLLight.png",
+  "galleryBanner": {
+    "color": "994d00",
+    "theme": "light"
+  },
+  "repository": {
+    "url": "https://github.com/danschultequb/qub-typescript-xml-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/danschultequb/qub-typescript-xml-vscode/issues",
+    "email": "dan.schulte.qub@live.com"
+  },
+  "homepage": "https://github.com/danschultequb/qub-typescript-xml-vscode#readme",
+  "engines": {
+    "vscode": "^1.14.0"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "activationEvents": [
+    "onLanguage:xml"
+  ],
+  "main": "./output/sources/Main",
+  "typings": "./output/sources/Main",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Qub XML",
+      "properties": {
+        "qub-xml.telemetry.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not telemetry will be enabled for the XML Tools extension."
+        },
+        "qub-xml.telemetry.file": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "The path to the file where telemetry will be logged to, if this value is provided."
+        },
+        "qub-xml.telemetry.remote": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether or not anonymous telemetry will be logged to Qub's remote telemetry server."
+        },
+        "qub-xml.formatOptions.alignAttributes": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, attributes will be aligned with each other during formatting. If false, attributes will be indented one additional indent further than the tag's left angle bracket."
+        }
+      }
+    }
+  },
+  "files": [
+    "output/sources/"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "prepublishOnly": "npm run build",
+    "test": "mocha --colors --require source-map-support/register --ui tdd output/tests/",
+    "coverage": "nyc npm test && open-cli output/coverage/index.html",
+    "travis-test": "npm run setup && npm run build && nyc --reporter=text-lcov npm test | coveralls",
+    "setup": "npm install && node ./node_modules/vscode/bin/install"
+  },
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "report-dir": "output/coverage/",
+    "temp-directory": "output/.nyc_output/",
+    "exclude": [
+      "output/tests"
+    ]
+  },
+  "devDependencies": {
+    "@types/mocha": "2.2.41",
+    "@types/node": "8.0.13",
+    "coveralls": "2.13.1",
+    "mocha": "3.4.2",
+    "nyc": "11.0.3",
+    "open-cli": "1.0.5",
+    "source-map-support": "0.4.15",
+    "typescript": "2.4.1"
+  },
+  "dependencies": {
+    "qub": "1.2.5",
+    "qub-xml": "1.0.1",
+    "qub-vscode": "1.0.3"
+  }
+}
