@@ -90,8 +90,7 @@
     "nyc": "11.0.3",
     "open-cli": "1.0.5",
     "source-map-support": "0.4.15",
-    "typescript": "2.4.1",
-    "vsce": "1.29.0"
+    "typescript": "2.4.1"
   },
   "dependencies": {
     "qub": "1.2.6",
