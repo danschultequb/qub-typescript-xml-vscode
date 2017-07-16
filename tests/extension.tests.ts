@@ -4,7 +4,7 @@ import * as mocks from "qub-vscode/mocks";
 import * as qub from "qub";
 import * as xml from "qub-xml";
 
-import * as e from "../sources/Extension";
+import * as e from "../sources/extension";
 
 suite("Extension", () => {
     test("constructor()", () => {

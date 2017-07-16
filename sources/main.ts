@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import * as qubVSCode from "qub-vscode/vscode";
 
-import * as xml from "./Extension";
+import * as xml from "./extension";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

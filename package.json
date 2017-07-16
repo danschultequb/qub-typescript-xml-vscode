@@ -29,8 +29,8 @@
   "activationEvents": [
     "onLanguage:xml"
   ],
-  "main": "./output/sources/Main",
-  "typings": "./output/sources/Main",
+  "main": "./output/sources/main",
+  "typings": "./output/sources/main",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -95,7 +95,7 @@
   },
   "dependencies": {
     "qub": "1.2.6",
-    "qub-xml": "1.0.2",
+    "qub-xml": "1.0.3",
     "qub-vscode": "1.0.8"
   }
 }
