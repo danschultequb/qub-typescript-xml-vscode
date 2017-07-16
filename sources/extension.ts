@@ -101,6 +101,8 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
                 alignAttributes: this.getConfigurationValue<boolean>("formatOptions.alignAttributes", false)
             });
         });
+
+        this.updateActiveDocumentParse();
     }
 
     public static provideCompletions(xmlDocument: xml.Document, index: number): qub.Iterable<interfaces.Completion> {
