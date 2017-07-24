@@ -1,8 +1,10 @@
 'use strict';
 
+import * as applicationInsights from "qub-telemetry-applicationinsights";
 import * as qub from "qub";
 import * as xml from "qub-xml";
 import * as interfaces from "qub-vscode/interfaces";
+import * as telemetry from "qub-telemetry";
 
 function getPathToSegment(index: number, xmlDocument: xml.Document): qub.Iterable<xml.Segment> {
     const result = new qub.ArrayList<xml.Segment>();
@@ -80,6 +82,8 @@ function getPackageJson(): any {
 }
 
 export class Extension extends interfaces.LanguageExtension<xml.Document> {
+    private _telemetry: applicationInsights.Telemetry;
+
     constructor(platform: interfaces.Platform) {
         super(getPackageJson().name, getPackageJson().version, "xml", platform);
 
@@ -103,6 +107,13 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
         });
 
         this.updateActiveDocumentParse();
+
+        this._telemetry = new applicationInsights.Telemetry({ instrumentationKey: "b0639062-9169-4fb7-b682-6edb50bacb39" });
+        this._telemetry.write(new telemetry.Event("Activated"));
+    }
+
+    public dispose(): void {
+        this._telemetry.close();
     }
 
     public static provideCompletions(xmlDocument: xml.Document, index: number): qub.Iterable<interfaces.Completion> {
