@@ -94,7 +94,9 @@
   },
   "dependencies": {
     "qub": "1.2.6",
-    "qub-xml": "1.0.3",
-    "qub-vscode": "1.0.9"
+    "qub-telemetry": "1.0.0",
+    "qub-telemetry-applicationinsights": "1.0.0",
+    "qub-vscode": "1.0.9",
+    "qub-xml": "1.0.3"
   }
 }
