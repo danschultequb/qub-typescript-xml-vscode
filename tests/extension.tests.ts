@@ -7,12 +7,30 @@ import * as xml from "qub-xml";
 import * as e from "../sources/extension";
 
 suite("Extension", () => {
-    test("constructor()", () => {
-        const platform = new mocks.Platform();
-        const extension = new e.Extension(platform);
-        assert.deepStrictEqual(extension.name, "qub-xml-vscode");
+    suite("constructor()", () => {
+        test("with telemetry enabled", () => {
+            const platform = new mocks.Platform();
+            const extension = new e.Extension(platform);
+            assert.deepStrictEqual(extension.name, "qub-xml-vscode");
 
-        extension.dispose();
+            extension.dispose();
+        });
+
+        test("with telemetry disabled", () => {
+            const platform = new mocks.Platform();
+            platform.setConfiguration(new mocks.Configuration({
+                "qub-xml-vscode": {
+                    "telemetry": {
+                        "enabled": false
+                    }
+                }
+            }));
+
+            const extension = new e.Extension(platform);
+            assert.deepStrictEqual(extension.name, "qub-xml-vscode");
+
+            extension.dispose();
+        });
     });
 
     suite("on document opened", () => {

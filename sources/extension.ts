@@ -1,8 +1,13 @@
 'use strict';
 
-import * as qub from "qub";
-import * as xml from "qub-xml";
+import * as applicationInsights from "qub-telemetry-applicationinsights";
+import * as fs from "fs";
 import * as interfaces from "qub-vscode/interfaces";
+import * as moment from "moment";
+import * as path from "path";
+import * as qub from "qub";
+import * as telemetry from "qub-telemetry";
+import * as xml from "qub-xml";
 
 function getPathToSegment(index: number, xmlDocument: xml.Document): qub.Iterable<xml.Segment> {
     const result = new qub.ArrayList<xml.Segment>();
@@ -103,6 +108,61 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
         });
 
         this.updateActiveDocumentParse();
+
+        const telemetryEnabled: boolean = this.getConfigurationValue("telemetry.enabled", true);
+        if (telemetryEnabled) {
+            const settingsFilePath: string = this.getSettingsFilePath();
+            let settingsJSON: any;
+            try {
+                const settingsFileContents: string = fs.readFileSync(settingsFilePath, "utf8");
+                settingsJSON = JSON.parse(settingsFileContents);
+            }
+            catch (e) {
+                settingsJSON = {};
+            }
+
+            const lastActivationDateAndTimeName: string = "lastActivationDateAndTime";
+            const lastActivationDateAndTime: string = settingsJSON[lastActivationDateAndTimeName];
+
+            const now: moment.Moment = moment();
+            const pad = (value: number) => {
+                let valueString: string = value.toString();
+                if (valueString.length === 1) {
+                    valueString = "0" + valueString;
+                }
+                return valueString;
+            };
+
+            const year: number = now.year();
+            const month: number = now.month() + 1;
+            const day: number = now.date();
+            const nowDateAndTime: string = `${year}-${pad(month)}-${pad(day)}`;
+            if (lastActivationDateAndTime !== nowDateAndTime) {
+                const appInsights = new applicationInsights.Telemetry({ instrumentationKey: "b0639062-9169-4fb7-b682-6edb50bacb39" });
+
+                appInsights.write(new telemetry.Event("Activated", {
+                    "extensionVersion": this.version,
+                    "machineId": platform.getMachineId()
+                }));
+                appInsights.close();
+
+                settingsJSON[lastActivationDateAndTimeName] = nowDateAndTime;
+
+                const foldersToCreate = new qub.Stack<string>();
+                let folderPath: string = path.dirname(settingsFilePath);
+                while (!fs.existsSync(folderPath)) {
+                    foldersToCreate.push(folderPath);
+                    folderPath = path.dirname(folderPath);
+                }
+
+                while (foldersToCreate.any()) {
+                    fs.mkdirSync(foldersToCreate.pop());
+                }
+
+                const settingsJSONString: string = JSON.stringify(settingsJSON)
+                fs.writeFileSync(settingsFilePath, settingsJSONString, "utf8");
+            }
+        }
     }
 
     public static provideCompletions(xmlDocument: xml.Document, index: number): qub.Iterable<interfaces.Completion> {

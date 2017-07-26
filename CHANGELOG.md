@@ -1,3 +1,7 @@
+### 1.2.4 (2017-07-25)
+
+- Add telemetry for when the extension gets activated. This will only be sent once a day if telemetry is enabled.
+
 ### 1.2.3 (2017-07-16)
 
 - Fix bug where first xml document opened in a VS Code session won't be recognized as an XML document

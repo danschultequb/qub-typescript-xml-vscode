@@ -2,7 +2,7 @@
   "name": "qub-xml-vscode",
   "displayName": "XML Tools",
   "description": "XML language support for VS Code",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "publisher": "qub",
   "categories": [
     "Languages",
@@ -40,17 +40,6 @@
           "type": "boolean",
           "default": true,
           "description": "Whether or not telemetry will be enabled for the XML Tools extension."
-        },
-        "qub-xml.telemetry.file": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255,
-          "description": "The path to the file where telemetry will be logged to, if this value is provided."
-        },
-        "qub-xml.telemetry.remote": {
-          "type": "boolean",
-          "default": true,
-          "description": "Whether or not anonymous telemetry will be logged to Qub's remote telemetry server."
         },
         "qub-xml.formatOptions.alignAttributes": {
           "type": "boolean",
@@ -93,8 +82,11 @@
     "typescript": "2.4.1"
   },
   "dependencies": {
+    "moment": "2.18.1",
     "qub": "1.2.6",
-    "qub-xml": "1.0.3",
-    "qub-vscode": "1.0.9"
+    "qub-telemetry": "1.0.0",
+    "qub-telemetry-applicationinsights": "1.0.0",
+    "qub-vscode": "1.0.10",
+    "qub-xml": "1.0.3"
   }
 }
