@@ -102,6 +102,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
             const activeTextEditor: interfaces.TextEditor = this.getActiveTextEditor();
             return document.format({
                 singleIndent: activeTextEditor.getIndent(),
+                tabLength: activeTextEditor.getTabLength(),
                 newLine: activeTextEditor.getNewLine(),
                 alignAttributes: this.getConfigurationValue<boolean>("formatOptions.alignAttributes", false)
             });

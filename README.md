@@ -16,4 +16,4 @@ This extension provides XML language support for VS Code, beyond simple text col
 
 ## Telemetry
 
-In order to best know which features to work on and improve, this extension collects anonymous telemetry by default. If you prefer no telemetry be collected, you can disable telemetry by changing the configuration value **"qub-xml.telemetry.enabled"** to be false.
+In order to best know which features to work on and improve, this extension collects anonymous telemetry by default. If you prefer no telemetry be collected, you can disable telemetry by changing the configuration value **"qub-xml-vscode.telemetry.enabled"** to be false.
