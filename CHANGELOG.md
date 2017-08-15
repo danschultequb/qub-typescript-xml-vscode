@@ -1,3 +1,8 @@
+### 1.2.6 (2017-08-14)
+
+- Update dependency versions
+- Minor bug fixes, test fixes, and refactoring
+
 ### 1.2.5 (2017-08-02)
 
 - Fix extension settings (qub-xml -> qub-xml-vscode)

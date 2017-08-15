@@ -2,7 +2,7 @@
   "name": "qub-xml-vscode",
   "displayName": "XML Tools",
   "description": "XML language support for VS Code",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "publisher": "qub",
   "categories": [
     "Languages",
