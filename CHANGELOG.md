@@ -1,3 +1,13 @@
+### 1.2.6 (2017-08-14)
+
+- Update dependency versions
+- Minor bug fixes, test fixes, and refactoring
+
+### 1.2.5 (2017-08-02)
+
+- Fix extension settings (qub-xml -> qub-xml-vscode)
+- Format document will now add tabs and spaces instead of just spaces if tab is the selected indentation.
+
 ### 1.2.4 (2017-07-25)
 
 - Add telemetry for when the extension gets activated. This will only be sent once a day if telemetry is enabled.

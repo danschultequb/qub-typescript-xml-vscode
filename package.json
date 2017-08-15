@@ -2,7 +2,7 @@
   "name": "qub-xml-vscode",
   "displayName": "XML Tools",
   "description": "XML language support for VS Code",
-  "version": "1.2.4",
+  "version": "1.2.6",
   "publisher": "qub",
   "categories": [
     "Languages",
@@ -36,12 +36,12 @@
       "type": "object",
       "title": "Qub XML",
       "properties": {
-        "qub-xml.telemetry.enabled": {
+        "qub-xml-vscode.telemetry.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Whether or not telemetry will be enabled for the XML Tools extension."
         },
-        "qub-xml.formatOptions.alignAttributes": {
+        "qub-xml-vscode.formatOptions.alignAttributes": {
           "type": "boolean",
           "default": false,
           "description": "If true, attributes will be aligned with each other during formatting. If false, attributes will be indented one additional indent further than the tag's left angle bracket."
@@ -73,20 +73,18 @@
   },
   "devDependencies": {
     "@types/mocha": "2.2.41",
-    "@types/node": "8.0.13",
+    "@types/node": "8.0.22",
     "coveralls": "2.13.1",
-    "mocha": "3.4.2",
-    "nyc": "11.0.3",
+    "mocha": "3.5.0",
+    "nyc": "11.1.0",
     "open-cli": "1.0.5",
     "source-map-support": "0.4.15",
-    "typescript": "2.4.1"
+    "typescript": "2.4.2"
   },
   "dependencies": {
-    "moment": "2.18.1",
-    "qub": "1.2.6",
-    "qub-telemetry": "1.0.0",
-    "qub-telemetry-applicationinsights": "1.0.0",
-    "qub-vscode": "1.0.10",
-    "qub-xml": "1.0.3"
+    "qub": "1.4.0",
+    "qub-telemetry-applicationinsights": "1.0.1",
+    "qub-vscode": "1.1.1",
+    "qub-xml": "1.0.5"
   }
 }
