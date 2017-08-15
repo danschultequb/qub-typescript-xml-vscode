@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/danschultequb/qub-typescript-xml-vscode#readme",
   "engines": {
-    "vscode": "^1.14.0"
+    "vscode": "1.14.0"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "activationEvents": [
@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@types/mocha": "2.2.41",
-    "@types/node": "8.0.19",
+    "@types/node": "8.0.22",
     "coveralls": "2.13.1",
     "mocha": "3.5.0",
     "nyc": "11.1.0",
@@ -83,10 +83,9 @@
   },
   "dependencies": {
     "moment": "2.18.1",
-    "qub": "1.2.7",
-    "qub-telemetry": "1.0.0",
+    "qub": "1.4.0",
     "qub-telemetry-applicationinsights": "1.0.0",
-    "qub-vscode": "1.0.12",
+    "qub-vscode": "1.1.0",
     "qub-xml": "1.0.4"
   }
 }

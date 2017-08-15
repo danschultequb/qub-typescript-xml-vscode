@@ -1,12 +1,8 @@
 'use strict';
 
 import * as applicationInsights from "qub-telemetry-applicationinsights";
-import * as fs from "fs";
-import * as interfaces from "qub-vscode/interfaces";
-import * as moment from "moment";
-import * as path from "path";
+import * as qubvscode from "qub-vscode";
 import * as qub from "qub";
-import * as telemetry from "qub-telemetry";
 import * as xml from "qub-xml";
 
 function getPathToSegment(index: number, xmlDocument: xml.Document): qub.Iterable<xml.Segment> {
@@ -30,8 +26,8 @@ function getPathToSegment(index: number, xmlDocument: xml.Document): qub.Iterabl
 }
 
 export class Hovers {
-    public static declaration(span: qub.Span): interfaces.Hover {
-        return new interfaces.Hover(
+    public static declaration(span: qub.Span): qubvscode.Hover {
+        return new qubvscode.Hover(
             [
                 "The declaration tag of this XML document.",
                 `[XML Specification](http://www.w3.org/TR/2008/REC-xml-20081126/#sec-prolog-dtd)`
@@ -39,8 +35,8 @@ export class Hovers {
             span);
     }
 
-    public static declarationVersion(span: qub.Span): interfaces.Hover {
-        return new interfaces.Hover(
+    public static declarationVersion(span: qub.Span): qubvscode.Hover {
+        return new qubvscode.Hover(
             [
                 `The version of XML to use to parse this document. The version number should be "1.0".`,
                 `[XML Specification](http://www.w3.org/TR/2008/REC-xml-20081126/#NT-VersionInfo)`
@@ -48,8 +44,8 @@ export class Hovers {
             span);
     }
 
-    public static declarationEncoding(span: qub.Span): interfaces.Hover {
-        return new interfaces.Hover(
+    public static declarationEncoding(span: qub.Span): qubvscode.Hover {
+        return new qubvscode.Hover(
             [
                 `The encoding that this XML file is encoded with.`,
                 `[XML Specification](http://www.w3.org/TR/2008/REC-xml-20081126/#NT-EncodingDecl)`
@@ -57,8 +53,8 @@ export class Hovers {
             span);
     }
 
-    public static declarationStandalone(span: qub.Span): interfaces.Hover {
-        return new interfaces.Hover(
+    public static declarationStandalone(span: qub.Span): qubvscode.Hover {
+        return new qubvscode.Hover(
             [
                 `Whether or not this XML document is allowed to reference external resources.`,
                 `[XML Specification](http://www.w3.org/TR/2008/REC-xml-20081126/#NT-SDDecl)`
@@ -66,8 +62,8 @@ export class Hovers {
             span);
     }
 
-    public static doctype(span: qub.Span): interfaces.Hover {
-        return new interfaces.Hover(
+    public static doctype(span: qub.Span): qubvscode.Hover {
+        return new qubvscode.Hover(
             [
                 "A document type definition (DTD) that defines the expected structure of this document.",
                 `[XML Specification](https://www.w3.org/TR/2008/REC-xml-20081126/#dt-doctype)`
@@ -84,8 +80,8 @@ function getPackageJson(): any {
     return packageJson;
 }
 
-export class Extension extends interfaces.LanguageExtension<xml.Document> {
-    constructor(platform: interfaces.Platform) {
+export class Extension extends qubvscode.LanguageExtension<xml.Document> {
+    constructor(platform: qubvscode.Platform) {
         super(getPackageJson().name, getPackageJson().version, "xml", platform);
 
         this.setOnParsedDocumentChanged(Extension.provideTextCompletion);
@@ -99,7 +95,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
         });
 
         this.setOnProvideFormattedDocument((document: xml.Document) => {
-            const activeTextEditor: interfaces.TextEditor = this.getActiveTextEditor();
+            const activeTextEditor: qubvscode.TextEditor = this.getActiveTextEditor();
             return document.format({
                 singleIndent: activeTextEditor.getIndent(),
                 tabLength: activeTextEditor.getTabLength(),
@@ -108,67 +104,14 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
             });
         });
 
+        this.writeActivationTelemetry(() => new applicationInsights.Telemetry({ instrumentationKey: "b0639062-9169-4fb7-b682-6edb50bacb39" }));
+
         this.updateActiveDocumentParse();
-
-        const telemetryEnabled: boolean = this.getConfigurationValue("telemetry.enabled", true);
-        if (telemetryEnabled) {
-            const settingsFilePath: string = this.getSettingsFilePath();
-            let settingsJSON: any;
-            try {
-                const settingsFileContents: string = fs.readFileSync(settingsFilePath, "utf8");
-                settingsJSON = JSON.parse(settingsFileContents);
-            }
-            catch (e) {
-                settingsJSON = {};
-            }
-
-            const lastActivationDateAndTimeName: string = "lastActivationDateAndTime";
-            const lastActivationDateAndTime: string = settingsJSON[lastActivationDateAndTimeName];
-
-            const now: moment.Moment = moment();
-            const pad = (value: number) => {
-                let valueString: string = value.toString();
-                if (valueString.length === 1) {
-                    valueString = "0" + valueString;
-                }
-                return valueString;
-            };
-
-            const year: number = now.year();
-            const month: number = now.month() + 1;
-            const day: number = now.date();
-            const nowDateAndTime: string = `${year}-${pad(month)}-${pad(day)}`;
-            if (lastActivationDateAndTime !== nowDateAndTime) {
-                const appInsights = new applicationInsights.Telemetry({ instrumentationKey: "b0639062-9169-4fb7-b682-6edb50bacb39" });
-
-                appInsights.write(new telemetry.Event("Activated", {
-                    "extensionVersion": this.version,
-                    "machineId": platform.getMachineId()
-                }));
-                appInsights.close();
-
-                settingsJSON[lastActivationDateAndTimeName] = nowDateAndTime;
-
-                const foldersToCreate = new qub.Stack<string>();
-                let folderPath: string = path.dirname(settingsFilePath);
-                while (!fs.existsSync(folderPath)) {
-                    foldersToCreate.push(folderPath);
-                    folderPath = path.dirname(folderPath);
-                }
-
-                while (foldersToCreate.any()) {
-                    fs.mkdirSync(foldersToCreate.pop());
-                }
-
-                const settingsJSONString: string = JSON.stringify(settingsJSON)
-                fs.writeFileSync(settingsFilePath, settingsJSONString, "utf8");
-            }
-        }
     }
 
-    public static provideCompletions(xmlDocument: xml.Document, index: number): qub.Iterable<interfaces.Completion> {
+    public static provideCompletions(xmlDocument: xml.Document, index: number): qub.Iterable<qubvscode.Completion> {
         const pathToSegment: qub.Iterable<xml.Segment> = getPathToSegment(index, xmlDocument);
-        let result = new qub.ArrayList<interfaces.Completion>();
+        let result = new qub.ArrayList<qubvscode.Completion>();
 
         const cursorSegment: xml.Segment = pathToSegment.last();
         if (cursorSegment) {
@@ -177,7 +120,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
                 if (secondSegment) {
                     if (secondSegment.toString() === "?") {
                         if (cursorSegment.startIndex + 2 === index) {
-                            result.add(new interfaces.Completion("xml", new qub.Span(cursorSegment.startIndex + 2, 0)));
+                            result.add(new qubvscode.Completion("xml", new qub.Span(cursorSegment.startIndex + 2, 0)));
                         }
                     }
                 }
@@ -185,17 +128,17 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
             else if (cursorSegment instanceof xml.ProcessingInstruction) {
                 const name: xml.Name = cursorSegment.name;
                 if (name && name.containsIndex(index)) {
-                    result.add(new interfaces.Completion("xml", name.span));
+                    result.add(new qubvscode.Completion("xml", name.span));
                 }
             }
             else if (cursorSegment instanceof xml.Declaration) {
                 if (cursorSegment.getName().containsIndex(index)) {
-                    result.add(new interfaces.Completion("xml", cursorSegment.getName().span));
+                    result.add(new qubvscode.Completion("xml", cursorSegment.getName().span));
                 }
                 else if (cursorSegment.getName().afterEndIndex < index && (!cursorSegment.rightQuestionMark || index <= cursorSegment.rightQuestionMark.startIndex)) {
                     const declarationAttributes: qub.Iterable<xml.Attribute> = cursorSegment.attributes.take(3);
                     if (!declarationAttributes.any() || index < declarationAttributes.first().startIndex) {
-                        result.add(new interfaces.Completion("version", new qub.Span(index, 0)));
+                        result.add(new qubvscode.Completion("version", new qub.Span(index, 0)));
                     }
                     else {
                         const declarationAttributeNames: string[] = ["version", "encoding", "standalone"];
@@ -212,7 +155,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
                             }
                             else {
                                 if (attribute.name.containsIndex(index)) {
-                                    result.add(new interfaces.Completion(declarationAttributeNames[attributeIndex], attribute.name.span));
+                                    result.add(new qubvscode.Completion(declarationAttributeNames[attributeIndex], attribute.name.span));
                                     break;
                                 }
                                 else if (attribute.equals && attribute.equals.afterEndIndex <= index) {
@@ -220,13 +163,13 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
                                     if (possibleValues) {
                                         if (!attribute.value && (index === attribute.equals.afterEndIndex || index < attribute.afterEndIndex || index === cursorSegment.afterEndIndex)) {
                                             for (const value of possibleValues) {
-                                                result.add(new interfaces.Completion(value, new qub.Span(index, 0)));
+                                                result.add(new qubvscode.Completion(value, new qub.Span(index, 0)));
                                             }
                                             break;
                                         }
                                         else if (attribute.value && (attribute.value.startIndex === index || attribute.value.containsIndex(index))) {
                                             for (const value of possibleValues) {
-                                                result.add(new interfaces.Completion(value, attribute.value.span));
+                                                result.add(new qubvscode.Completion(value, attribute.value.span));
                                             }
                                             break;
                                         }
@@ -241,7 +184,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
 
                         if (!result.any()) {
                             if (declarationAttributes.last().afterEndIndex < index && declarationAttributes.getCount() < 3) {
-                                result.add(new interfaces.Completion(declarationAttributeNames[declarationAttributes.getCount()], new qub.Span(index, 0)));
+                                result.add(new qubvscode.Completion(declarationAttributeNames[declarationAttributes.getCount()], new qub.Span(index, 0)));
                             }
                         }
                     }
@@ -252,7 +195,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
                     const secondToLastSegment: xml.Segment = pathToSegment.skipLast(1).last();
                     if (secondToLastSegment && secondToLastSegment instanceof xml.Element && secondToLastSegment.startTag && secondToLastSegment.startTag.getName()) {
                         const completionSpan = cursorSegment.name ? cursorSegment.name.span : new qub.Span(cursorSegment.forwardSlash.afterEndIndex, 0);
-                        result.add(new interfaces.Completion(secondToLastSegment.startTag.getName().toString(), completionSpan));
+                        result.add(new qubvscode.Completion(secondToLastSegment.startTag.getName().toString(), completionSpan));
                     }
                 }
             }
@@ -261,10 +204,10 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
         return result;
     }
 
-    public static provideHover(xmlDocument: xml.Document, index: number): interfaces.Hover {
+    public static provideHover(xmlDocument: xml.Document, index: number): qubvscode.Hover {
         const pathToSegment: qub.Iterable<xml.Segment> = getPathToSegment(index, xmlDocument);
         const cursorSegment: xml.Segment = pathToSegment.last();
-        let result: interfaces.Hover;
+        let result: qubvscode.Hover;
 
         if (cursorSegment) {
             if (cursorSegment instanceof xml.Declaration) {
@@ -291,7 +234,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
         return result;
     }
 
-    public static provideTextCompletion(parsedDocumentChange: interfaces.ParsedDocumentChange<xml.Document>): void {
+    public static provideTextCompletion(parsedDocumentChange: qubvscode.ParsedDocumentChange<xml.Document>): void {
         const pathToSegment: qub.Iterable<xml.Segment> = getPathToSegment(parsedDocumentChange.startIndex, parsedDocumentChange.parsedDocument);
         const cursorSegment: xml.Segment = pathToSegment.last();
 
@@ -362,7 +305,7 @@ export class Extension extends interfaces.LanguageExtension<xml.Document> {
         }
     }
 
-    protected isParsable(textDocument: interfaces.TextDocument): boolean {
+    protected isParsable(textDocument: qubvscode.TextDocument): boolean {
         return textDocument && textDocument.getLanguageId().toLowerCase() === "xml";
     }
 
