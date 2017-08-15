@@ -1,3 +1,7 @@
+### 1.2.7 (2017-08-15)
+
+- Add setting for collapsing elements with no content.
+
 ### 1.2.6 (2017-08-14)
 
 - Update dependency versions
