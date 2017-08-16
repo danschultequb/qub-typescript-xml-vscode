@@ -100,7 +100,8 @@ export class Extension extends qubvscode.LanguageExtension<xml.Document> {
                 singleIndent: activeTextEditor.getIndent(),
                 tabLength: activeTextEditor.getTabLength(),
                 newLine: activeTextEditor.getNewLine(),
-                alignAttributes: this.getConfigurationValue<boolean>("formatOptions.alignAttributes", false)
+                alignAttributes: this.getConfigurationValue<boolean>("formatOptions.alignAttributes", false),
+                collapseEmptyElements: this.getConfigurationValue<boolean>("formatOptions.collapseEmptyElements", true)
             });
         });
 

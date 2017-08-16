@@ -2,7 +2,7 @@
   "name": "qub-xml-vscode",
   "displayName": "XML Tools",
   "description": "XML language support for VS Code",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "publisher": "qub",
   "categories": [
     "Languages",
@@ -45,6 +45,11 @@
           "type": "boolean",
           "default": false,
           "description": "If true, attributes will be aligned with each other during formatting. If false, attributes will be indented one additional indent further than the tag's left angle bracket."
+        },
+        "qub-xml-vscode.formatOptions.collapseEmptyElements": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, elements with no text content (newlines are considered text elements) or child elements will be collapsed down to an empty element (<a></a> -> <a/>) when the document is formatted."
         }
       }
     }
@@ -85,6 +90,6 @@
     "qub": "1.4.0",
     "qub-telemetry-applicationinsights": "1.0.1",
     "qub-vscode": "1.1.1",
-    "qub-xml": "1.0.5"
+    "qub-xml": "1.0.6"
   }
 }
