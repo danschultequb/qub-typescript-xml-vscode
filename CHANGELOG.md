@@ -1,3 +1,7 @@
+### 1.2.8 (2017-08-15)
+
+- Fix formatting bug where a level of indentation was being lost when alignAttributes was true and a tag was formatted that didn't have any attributes.
+
 ### 1.2.7 (2017-08-15)
 
 - Add setting for collapsing elements with no content.
